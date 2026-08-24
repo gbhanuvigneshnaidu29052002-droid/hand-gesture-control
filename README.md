@@ -36,15 +36,37 @@
 
 ---
 
-### C. System Architecture & Setup
+### 📐 System Architecture & Mathematical Formulation
 
-1. **Landmark Extraction:** MediaPipe Hands (21 3D joint coordinates).
-2. **Kinematic Classification:** Rule-based vertical joint elevation comparison:
-   $$\text{FingerState}_i = \begin{cases} 1 & \text{if } y_{\text{tip}, i} < y_{\text{PIP}, i} \\ 0 & \text{otherwise} \end{cases}$$
-3. **Exponential Moving Average (EMA) Smoothing:**
-   $$\vec{P}_{\text{curr}} = \vec{P}_{\text{prev}} + \frac{\vec{P}_{\text{target}} - \vec{P}_{\text{prev}}}{\alpha}$$
-   where $\alpha = 5$ for ultra-smooth motion.
-4. **Temporal Stability Filtering:** Majority voting over 4 consecutive frames.
+The touchless control framework processes video streams through a four-stage pipeline:
+
+#### 1. Landmark Topology Extraction
+- Uses **MediaPipe Hands** to detect 21 3D hand keypoints $(x_i, y_i, z_i)$ per frame.
+- Normalized keypoints $(x_i, y_i) \in [0, 1]^2$ are mapped to OS display bounds $(W_{\text{screen}}, H_{\text{screen}})$.
+
+#### 2. Kinematic State Classification
+Finger elevation states are evaluated by comparing distal fingertip positions ($y_{\text{tip}}$) against proximal interphalangeal joints ($y_{\text{PIP}}$):
+
+```math
+\text{FingerState}_i = \begin{cases} 1 & \text{if } y_{\text{tip}, i} < y_{\text{PIP}, i} \quad (\text{Finger Extended}) \\ 0 & \text{if } y_{\text{tip}, i} \ge y_{\text{PIP}, i} \quad (\text{Finger Folded}) \end{cases}
+```
+
+- **Pinch Thresholding:** Spatial Euclidean distance between Thumb Tip ($P_4$) and Index Tip ($P_8$):
+```math
+D_{\text{pinch}} = \sqrt{(x_8 - x_4)^2 + (y_8 - y_4)^2} < 30\text{ px}
+```
+
+#### 3. Cursor Kinematics & Exponential Smoothing
+Sub-pixel cursor movement uses Exponential Moving Average (EMA) filtering to eliminate high-frequency hand tremor:
+
+```math
+P_{\text{curr}} = P_{\text{prev}} + \frac{P_{\text{target}} - P_{\text{prev}}}{\alpha} \quad (\text{where } \alpha = 5)
+```
+
+#### 4. Temporal Hysteresis Majority Voting
+To eliminate transient landmark flicker:
+- Maintains a sliding history buffer of size $N = 4$ frames: $\mathcal{H} = [g_{t-3}, g_{t-2}, g_{t-1}, g_t]$.
+- Active gesture $G_{\text{output}} = \text{mode}(\mathcal{H})$ dispatches actions only when supported by consecutive frames.
 
 ---
 
