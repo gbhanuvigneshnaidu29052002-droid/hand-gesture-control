@@ -1,19 +1,21 @@
+import math
 import cv2
 import mediapipe as mp
 
 class HandDetector:
     """
     Detects hand landmarks using MediaPipe and provides utility functions
-    like extracting landmark positions and checking finger states.
+    like extracting landmark positions, checking finger states, and distance measuring.
     """
 
-    def __init__(self, max_hands=1, detection_conf=0.7, tracking_conf=0.7):
+    def __init__(self, max_hands=1, model_complexity=0, detection_conf=0.5, tracking_conf=0.5):
         # Initialize MediaPipe Hands module
         self.mp_hands = mp.solutions.hands
 
-        # Create hand detection object
+        # Create hand detection object (model_complexity=0 for 30+ FPS CPU execution)
         self.hands = self.mp_hands.Hands(
             max_num_hands=max_hands,
+            model_complexity=model_complexity,
             min_detection_confidence=detection_conf,
             min_tracking_confidence=tracking_conf
         )
@@ -79,3 +81,24 @@ class HandDetector:
             fingers.append(self.landmarks[tip][2] < self.landmarks[pip][2])
 
         return fingers
+
+    def find_distance(self, p1, p2, frame=None, draw=True):
+        """
+        Calculate Euclidean distance between landmark points p1 and p2
+        """
+        if not self.landmarks or len(self.landmarks) <= max(p1, p2):
+            return 0, frame, []
+
+        x1, y1 = self.landmarks[p1][1], self.landmarks[p1][2]
+        x2, y2 = self.landmarks[p2][1], self.landmarks[p2][2]
+        cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
+
+        length = math.hypot(x2 - x1, y2 - y1)
+
+        if draw and frame is not None:
+            cv2.line(frame, (x1, y1), (x2, y2), (255, 0, 255), 2)
+            cv2.circle(frame, (x1, y1), 8, (255, 0, 255), cv2.FILLED)
+            cv2.circle(frame, (x2, y2), 8, (255, 0, 255), cv2.FILLED)
+            cv2.circle(frame, (cx, cy), 8, (0, 0, 255), cv2.FILLED)
+
+        return length, frame, [x1, y1, x2, y2, cx, cy]

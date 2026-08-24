@@ -1,8 +1,22 @@
-Step 1 — Go to project root
+Step 1 — Go to project directory
 cd hand-gesture-control
-Step 2 — Activate environment
-.\venv\Scripts\activate
-Step 3 — Install dependencies
-pip install -r requirements.txt
-Step 4 — Run project
-python -m src.main
+
+Step 2 — Activate virtual environment
+..\.venv\Scripts\Activate.ps1
+
+Step 3 — Run project (High Performance 20-30+ FPS Mode)
+..\.venv\Scripts\python.exe main.py
+
+=======================================================
+🖐️ GESTURE CONTROL GUIDE (High FPS & Smooth Control)
+=======================================================
+1. POINT       : Index finger UP -> Move mouse cursor
+2. DRAG        : Pinch Thumb to Index Tip (< 30px) -> Hold & Drag
+3. CLICK       : Index + Middle fingers UP -> Single Left Click
+4. DOUBLE_CLICK: Index + Middle + Ring fingers UP -> Double Left Click
+5. RIGHT_CLICK : Index + Pinky fingers UP -> Right Click / Context Menu
+6. PALM SCROLL : Show Open Palm & Move Palm UP or DOWN:
+   - Move Palm UP   -> Smoothly scroll page UP
+   - Move Palm DOWN -> Smoothly scroll page DOWN
+   - Hold Palm STILL -> Pause scrolling
+=======================================================
