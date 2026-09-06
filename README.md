@@ -1,9 +1,12 @@
 # Real-Time Touchless Human-Computer Interaction via Hand Gesture Control
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https.python.org)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://python.org)
 [![OpenCV](https://img.shields.io/badge/OpenCV-Computer%20Vision-green.svg)](https://opencv.org/)
 [![MediaPipe](https://img.shields.io/badge/MediaPipe-Landmark%20Tracking-orange.svg)](https://google.github.io/mediapipe/)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
+[![Tests](https://img.shields.io/badge/Tests-Passing%20(20%2F20)-success.svg)](tests/)
 
 **Author:** Bhanu Vignesh Naidu Ganeshna  
 **Course:** Image Processing & Computer Vision (Practical Project)  
@@ -106,7 +109,7 @@ We benchmarked our **Optimized Kinematic Pipeline** against standard alternative
 
 ### 1. Prerequisites
 - Python 3.10+
-- Webcam
+- Standard USB / Integrated Webcam
 
 ### 2. Quick Setup
 ```bash
@@ -114,12 +117,55 @@ We benchmarked our **Optimized Kinematic Pipeline** against standard alternative
 git clone https://github.com/gbhanuvigneshnaidu29052002-droid/hand-gesture-control.git
 cd hand-gesture-control
 
+# Create virtual environment
+python3 -m venv .venv
+
 # Activate virtual environment
-..\.venv\Scripts\Activate.ps1
+# On Linux / macOS:
+source .venv/bin/activate
+# On Windows:
+.venv\Scripts\activate
+
+# Install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
 
 # Run live gesture controller
 python main.py
 ```
+
+Press **`q`** at any time to exit the controller cleanly.
+
+---
+
+## 🧪 Automated Testing & Verification
+
+The repository includes a comprehensive automated test suite verifying configuration bounds, kinematic gesture classification, temporal anti-flicker filtering, sub-pixel cursor kinematics, and synthetic frame landmark extraction:
+
+```bash
+# Run all unit tests
+python3 -m unittest discover -s tests -v
+```
+
+### Test Suite Highlights
+- **`TestConfig`**: Validates resolution geometry, bounds reductions, and non-blocking timing thresholds.
+- **`TestGestureController`**: Verifies deterministic classification across `POINT`, `DRAG`, `CLICK`, `DOUBLE_CLICK`, `RIGHT_CLICK`, `PALM_SCROLL`, and `NONE`.
+- **`TestTemporalHysteresis`**: Verifies that single-frame transient tracking noise is rejected by the sliding buffer.
+- **`TestMouseController`**: Validates exponential moving average smoothing math and non-blocking event dispatching.
+- **`TestHandDetector`**: Validates 3D landmark parsing, Euclidean distance calculation, and synthetic frame processing.
+- **`TestEndToEndPipelineIntegration`**: Headless end-to-end integration test of detection, gesture parsing, and OS cursor dispatching.
+
+---
+
+## 🤝 Contributing & Community Standards
+
+We welcome contributions from the community! Please review our community health files:
+
+- **[Contributing Guidelines](CONTRIBUTING.md)**: Development workflow, environment setup, and PR conventions.
+- **[Code of Conduct](CODE_OF_CONDUCT.md)**: Contributor Covenant v2.1 standards.
+- **[Security Policy](SECURITY.md)**: Local webcam privacy and vulnerability disclosure.
+- **[Issue Templates](.github/ISSUE_TEMPLATE/)**: Structured reporting for bugs and feature requests.
+- **[Pull Request Template](.github/pull_request_template.md)**: Verification checklist for pull requests.
 
 ---
 
@@ -128,4 +174,4 @@ python main.py
 I confirm that this project was designed, implemented, and documented by me for the Image Processing & Computer Vision coursework.
 
 **Author:** Bhanu Vignesh Naidu Ganeshna  
-**License:** MIT License
+**License:** [MIT License](LICENSE)

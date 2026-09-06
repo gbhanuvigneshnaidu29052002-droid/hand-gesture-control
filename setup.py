@@ -8,9 +8,10 @@ setup(
     packages=find_packages(),
     install_requires=[
         "opencv-python>=4.5.0",
-        "mediapipe>=0.8.9",
+        "mediapipe==0.10.8",
+        "protobuf<4,>=3.11",
         "pyautogui>=0.9.53",
-        "numpy>=1.21.0"
+        "numpy>=1.21.0,<2.0.0",
     ],
     entry_points={
         'console_scripts': [
